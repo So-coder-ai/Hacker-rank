@@ -1,0 +1,78 @@
+#include <stdio.h>
+#include <string.h>
+#include <math.h>
+#include <stdlib.h>
+
+#define MAX_GRID_SIZE           1000
+
+int PatternExists
+    (
+    short rows_g,
+    short cols_g,
+    short rows_p,
+    short cols_p,
+    char g[MAX_GRID_SIZE][MAX_GRID_SIZE+1],
+    char p[MAX_GRID_SIZE][MAX_GRID_SIZE+1]
+    )
+{
+    long hash_g, hash_p, i, j, k, l, result, count = 0;
+
+    for (i = 0, hash_p = 0; i < cols_p; i++)
+        hash_p += p[0][i] - '0';
+
+    for (i = 0, result = 0; i < (rows_g - (rows_p - 1)); i++)
+    {
+        for (j = 0, hash_g = 0; j < cols_g; j++)
+        {
+            hash_g += g[i][j] - '0';
+            if (j >= (cols_p - 1))
+            {
+                if (j > (cols_p - 1))
+                    hash_g -= g[i][j - cols_p] - '0';
+                if (hash_g == hash_p)
+                {
+                    for (k = 0; k < rows_p; k++)
+                    {
+                        for (l = 0; l < cols_p; l++)
+                        {
+                            if (g[i + k][j - (cols_p - 1) + l] == p[k][l])
+                                result = 1;
+                            else
+                            {
+                                result = 0;
+                                break;
+                            }
+                        }
+                        if (!result)
+                            break;
+                    }
+                    if (result)
+                        return 1;
+                }
+            }
+        }
+    }
+    return 0;
+}
+
+int main() {
+    short num_test_cases, R, C, r, c, i, j;
+    char grid[MAX_GRID_SIZE][MAX_GRID_SIZE+1];
+    char pattern[MAX_GRID_SIZE][MAX_GRID_SIZE+1];
+    scanf("%hi", &num_test_cases);
+
+    for (i = 0; i < num_test_cases; i++)
+    {
+        scanf("%hi %hi", &R, &C);
+        for (j = 0; j < R; j++)
+            scanf("%s", grid[j]);
+        scanf("%hi %hi", &r, &c);
+        for (j = 0; j < r; j++)
+            scanf("%s", pattern[j]);
+        if (PatternExists(R, C, r, c, grid, pattern))
+            printf("YES\n");
+        else
+            printf("NO\n");
+    }
+    return 0;
+}
